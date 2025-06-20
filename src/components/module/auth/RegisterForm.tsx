@@ -1,21 +1,16 @@
 "use client"
 import React, { useState } from 'react';
-
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
-
-
 import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
-
 import { Input } from "@/components/ui/input"
 import { useAuth } from '@/provider/UserProvider';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,17 +29,13 @@ const RegistrationForm = () => {
         password: string;
         terms?: boolean;
     }
-
     const form = useForm<RegisterFormValues>({ resolver: zodResolver(registrationSchema) });
     const [showPassword, setShowPassword] = useState(false)
     const router = useRouter()
-
     const { setUser } = useAuth()!
     const { isSubmitting } = form.formState
 
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-
-
         try {
             const result = await registerUser(data);
             console.log({ result });
@@ -102,8 +93,6 @@ const RegistrationForm = () => {
                                     </FormItem>
                                 )}
                             />
-
-
                             <FormField
                                 control={form.control}
                                 name="password"
@@ -134,8 +123,6 @@ const RegistrationForm = () => {
                                     </FormItem>
                                 )}
                             />
-
-
                             <FormField
                                 control={form.control}
                                 name="terms"

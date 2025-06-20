@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
+
 import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { FieldValues } from "react-hook-form";
+
+// REGISTER USER
 export const registerUser = async (userData: FieldValues) => {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API}/auth/register`, {
@@ -12,17 +15,22 @@ export const registerUser = async (userData: FieldValues) => {
       },
       body: JSON.stringify(userData),
     });
+
     const data = await res.json();
     console.log({ data });
+
     if (data?.success) {
       (await cookies()).set("accessToken", data?.data?.accessToken);
       (await cookies()).set("refreshToken", data?.data?.refreshToken);
     }
+
     return data;
   } catch (error: any) {
-    return Error(error);
+    return { success: false, message: error.message };
   }
 };
+
+// LOGIN USER
 export const loginUser = async (userData: FieldValues) => {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API}/auth/login`, {
@@ -32,83 +40,109 @@ export const loginUser = async (userData: FieldValues) => {
       },
       body: JSON.stringify(userData),
     });
+
     const data = await res.json();
+
     if (data?.success) {
       (await cookies()).set("accessToken", data?.data?.accessToken);
       (await cookies()).set("refreshToken", data?.data?.refreshToken);
     }
+
     return data;
   } catch (error: any) {
-    return Error(error);
+    return { success: false, message: error.message };
   }
 };
 
+// GET ME
 export const getMe = async () => {
   try {
+    const token = (await cookies()).get("accessToken")?.value || "";
+
     const res = await fetch(`${process.env.NEXT_PUBLIC_API}/auth/get-me`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: (await cookies()).get("accessToken")?.value as string,
+        Authorization: token,
       },
     });
+
     const data = await res.json();
     return data;
   } catch (error: any) {
-    return Error(error);
+    return { success: false, message: error.message };
   }
 };
 
+// LOGOUT USER
 export const logOutUser = async () => {
   (await cookies()).delete("accessToken");
   (await cookies()).delete("refreshToken");
 };
 
+// GET CURRENT USER (DECODED)
 export const getCurrentUser = async () => {
-  const accessToken = (await cookies()).get("accessToken")?.value as string;
-  let decoded = null;
+  const accessToken = (await cookies()).get("accessToken")?.value;
+
   if (accessToken) {
-    decoded = jwtDecode(accessToken);
-  }
-  return decoded;
-};
-
-export const getAccessToken = async () => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API}/auth/generate-access-token`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: (await cookies()).get("refreshToken")?.value as string,
-      },
+    try {
+      return jwtDecode(accessToken);
+    } catch {
+      return null;
     }
-  );
-  const data = await res.json();
-  return data;
+  }
+
+  return null;
 };
 
-export const changePassword = async (userData: FieldValues) => {
-  console.log({ userData });
+// REFRESH ACCESS TOKEN
+export const getAccessToken = async () => {
   try {
+    const refreshToken = cookies().get("refreshToken")?.value || "";
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API}/auth/generate-access-token`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: refreshToken,
+        },
+      }
+    );
+
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+};
+
+// CHANGE PASSWORD
+export const changePassword = async (userData: FieldValues) => {
+  try {
+    const accessToken = cookies().get("accessToken")?.value || "";
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API}/auth/change-password`,
       {
         method: "POST",
         headers: {
-          Authorization: (await cookies()).get("accessToken")?.value as string,
           "Content-Type": "application/json",
+          Authorization: accessToken,
         },
         body: JSON.stringify(userData),
       }
     );
+
     const data = await res.json();
     return data;
   } catch (error: any) {
-    return Error(error);
+    return { success: false, message: error.message };
   }
 };
 
+// FORGOT PASSWORD
 export const forgetPassword = async (userData: FieldValues) => {
   try {
     const res = await fetch(
@@ -121,12 +155,15 @@ export const forgetPassword = async (userData: FieldValues) => {
         body: JSON.stringify(userData),
       }
     );
+
     const data = await res.json();
     return data;
   } catch (error: any) {
-    return Error(error);
+    return { success: false, message: error.message };
   }
 };
+
+// RESET PASSWORD
 export const resetPassword = async (userData: FieldValues) => {
   try {
     const res = await fetch(
@@ -139,9 +176,10 @@ export const resetPassword = async (userData: FieldValues) => {
         body: JSON.stringify(userData),
       }
     );
+
     const data = await res.json();
     return data;
   } catch (error: any) {
-    return Error(error);
+    return { success: false, message: error.message };
   }
 };

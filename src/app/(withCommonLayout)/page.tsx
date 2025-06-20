@@ -8,6 +8,11 @@ import Banner from "@/components/home/header/Banner";
 import SubscriptionPlans from "@/components/home/subscription/SubscriptionPlans";
 import HowItWorks from "@/components/home/HowItWorks/HowItWorks";
 import Testimonial from "@/components/home/Testimonials/testimonial";
+export const metadata = {
+  title: " Rate My byte | Home ",
+  description:
+    "Discover food events, community, and the best food spots with FoodSpot.",
+};
 export default function Home() {
   return (
     <div className="space-y-10">
