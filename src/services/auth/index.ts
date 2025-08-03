@@ -20,8 +20,9 @@ export const registerUser = async (userData: FieldValues) => {
     console.log({ data });
 
     if (data?.success) {
-      (await cookies()).set("accessToken", data?.data?.accessToken);
-      (await cookies()).set("refreshToken", data?.data?.refreshToken);
+      const cookieStore = await cookies();
+      cookieStore.set("accessToken", data?.data?.accessToken);
+      cookieStore.set("refreshToken", data?.data?.refreshToken);
     }
 
     return data;
@@ -44,8 +45,9 @@ export const loginUser = async (userData: FieldValues) => {
     const data = await res.json();
 
     if (data?.success) {
-      (await cookies()).set("accessToken", data?.data?.accessToken);
-      (await cookies()).set("refreshToken", data?.data?.refreshToken);
+      const cookieStore = await cookies();
+      cookieStore.set("accessToken", data?.data?.accessToken);
+      cookieStore.set("refreshToken", data?.data?.refreshToken);
     }
 
     return data;
@@ -57,7 +59,8 @@ export const loginUser = async (userData: FieldValues) => {
 // GET ME
 export const getMe = async () => {
   try {
-    const token = (await cookies()).get("accessToken")?.value || "";
+    const cookieStore = await cookies();
+    const token = cookieStore.get("accessToken")?.value || "";
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API}/auth/get-me`, {
       method: "GET",
@@ -76,13 +79,15 @@ export const getMe = async () => {
 
 // LOGOUT USER
 export const logOutUser = async () => {
-  (await cookies()).delete("accessToken");
-  (await cookies()).delete("refreshToken");
+  const cookieStore = await cookies();
+  cookieStore.delete("accessToken");
+  cookieStore.delete("refreshToken");
 };
 
 // GET CURRENT USER (DECODED)
 export const getCurrentUser = async () => {
-  const accessToken = (await cookies()).get("accessToken")?.value;
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
 
   if (accessToken) {
     try {
@@ -97,8 +102,9 @@ export const getCurrentUser = async () => {
 
 // REFRESH ACCESS TOKEN
 export const getAccessToken = async () => {
+  const cookieStore = await cookies();
   try {
-    const refreshToken = cookies().get("refreshToken")?.value || "";
+    const refreshToken = cookieStore.get("refreshToken")?.value || "";
 
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API}/auth/generate-access-token`,
@@ -121,7 +127,8 @@ export const getAccessToken = async () => {
 // CHANGE PASSWORD
 export const changePassword = async (userData: FieldValues) => {
   try {
-    const accessToken = cookies().get("accessToken")?.value || "";
+    const cookieStore = await cookies(); 
+    const accessToken = cookieStore.get("accessToken")?.value || "";
 
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API}/auth/change-password`,

@@ -45,7 +45,7 @@ export default function Banner() {
                 <Link href="/posts">Explore Food Spots</Link>
               </Button>
               <Button size="lg" variant="secondary" className="">
-                <Link href="/signup">Join Community</Link>
+                <Link href="/register">Join Community</Link>
               </Button>
             </div>
           </div>
