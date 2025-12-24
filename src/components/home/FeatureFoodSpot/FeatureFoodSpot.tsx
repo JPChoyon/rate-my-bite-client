@@ -1,11 +1,8 @@
 import PostCard from '@/components/module/post/PostCard'
-
 import { Button } from '@/components/ui/button'
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getHomePagePosts } from '@/services/dashboard/user'
 import { IPost } from '@/types'
-
 import Link from 'next/link'
 import React from 'react'
 
@@ -22,8 +19,6 @@ export default async function FeatureFoodSpot() {
                 averageRating: average,
             };
         });
-
-
 
     return (
 

@@ -67,7 +67,7 @@ export function FoodEvents() {
                 </div>
 
                 <Button asChild className="mt-4 md:mt-0 bg-primary hover:bg-orange-700 text-white">
-                    <Link href="/events">
+                    <Link href="/">
                         <CalendarDays className="h-4 w-4 mr-2" />
                         View Full Calendar
                     </Link>

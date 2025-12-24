@@ -49,7 +49,7 @@ export const getHomePagePosts = async () => {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API}/post/all`, {
       next: {
-        revalidate: 60000,
+        revalidate: 600,
       },
       method: "GET",
     });
